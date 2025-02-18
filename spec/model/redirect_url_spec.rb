@@ -21,21 +21,42 @@ RSpec.describe RedirectUrl, type: :model do
     end
 
     context "when slug is present" do
-      it "is valid with a 7-character slug" do
-        redirect_url.slug = "abcdefg"
+      it "is valid with length <= 13" do
+        redirect_url.slug = "a" * 13
         expect(redirect_url).to be_valid
       end
 
-      it "is invalid with a slug shorter than 7 characters" do
-        redirect_url.slug = "abc"
+      it "is invalid with length > 13" do
+        redirect_url.slug = "a" * 14
         expect(redirect_url).not_to be_valid
-        expect(redirect_url.errors[:slug]).to include("is the wrong length (should be 7 characters)")
+        expect(redirect_url.errors[:slug]).to include("is too long (maximum is 13 characters)")
       end
+    end
+  end
 
-      it "is invalid with a slug longer than 7 characters" do
-        redirect_url.slug = "abcdefgh"
+  describe "expires_at validation" do
+    context "when expires_at is in the future" do
+      let(:redirect_url) { build(:redirect_url, expires_at: 1.day.from_now) }
+
+      it "is valid" do
+        expect(redirect_url).to be_valid
+      end
+    end
+
+    context "when expires_at is in the past" do
+      let(:redirect_url) { build(:redirect_url, expires_at: 1.day.ago) }
+
+      it "is invalid" do
         expect(redirect_url).not_to be_valid
-        expect(redirect_url.errors[:slug]).to include("is the wrong length (should be 7 characters)")
+        expect(redirect_url.errors[:expires_at]).to include("must be in the future")
+      end
+    end
+
+    context "when expires_at is nil" do
+      let(:redirect_url) { build(:redirect_url, expires_at: nil) }
+
+      it "is valid" do
+        expect(redirect_url).to be_valid
       end
     end
   end

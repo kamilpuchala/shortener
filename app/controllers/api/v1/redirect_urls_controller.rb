@@ -3,6 +3,7 @@ module Api
     class RedirectUrlsController < ApplicationController
       def index
         redirect_urls = RedirectUrl.all
+
         render json:  redirect_urls_presenter(redirect_urls)
       end
 
@@ -14,7 +15,10 @@ module Api
 
 
       def create
-        redirect_url = ::RedirectUrls::Create.new(original_url: redirect_url_params[:original_url]).call
+        redirect_url = ::RedirectUrls::Create.new(original_url: redirect_url_params[:original_url],
+                                                  expires_at: redirect_url_params[:expires_at],
+                                                  custom_slug: redirect_url_params[:custom_slug]
+                            ).call
 
         if redirect_url.errors.empty?
            render json: redirect_url_presenter(redirect_url), status: :created
@@ -26,7 +30,7 @@ module Api
       private
 
       def redirect_url_params
-        params.require(:redirect_url).permit(:original_url)
+        params.require(:redirect_url).permit(:original_url, :expires_at, :custom_slug)
       end
 
       def redirect_url_presenter(redirect_url)

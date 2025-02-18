@@ -8,7 +8,8 @@
             id: id,
             original_url: original_url,
             slug: slug,
-            visits: visits
+            visits: visits,
+            expires_at: expires_at
           }
         end
       end

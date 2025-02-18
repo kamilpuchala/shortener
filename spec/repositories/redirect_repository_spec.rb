@@ -11,7 +11,9 @@ RSpec.describe RedirectsRepository, :memory_cache do
         RedirectUrl::CachedRedirectUrl.new(
           redirect_url.id,
           redirect_url.original_url,
-          redirect_url.slug)
+          redirect_url.slug,
+          redirect_url.expires_at
+          )
       end
 
       context "when record is not cached" do

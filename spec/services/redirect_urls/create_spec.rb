@@ -2,17 +2,50 @@ require 'rails_helper'
 
 RSpec.describe RedirectUrls::Create, type: :service do
   let(:original_url) { "https://example.com" }
-  subject { described_class.new(original_url: original_url) }
+  let(:expires_at) { nil }
+  let(:custom_slug) { nil }
+  subject { described_class.new(original_url: original_url, custom_slug: custom_slug, expires_at: expires_at) }
   let(:result) { subject.call }
 
   context "when saving succeeds" do
-    it "creates a RedirectUrl with a slug" do
+    context "without custom_slug" do
+      it "creates a RedirectUrl with a slug" do
+        redirect_url = subject.call
+
+        expect(redirect_url).to be_persisted
+        expect(redirect_url.original_url).to eq(original_url)
+        expect(redirect_url.slug).to be_present
+        expect(redirect_url.slug.length).to eq(7)
+      end
+
+      it "writes the created record to cache" do
+        expect(Caches::Write).to receive(:call).and_call_original
+        subject.call
+      end
+    end
+  end
+
+  context "with a valid custom_slug" do
+    let(:custom_slug) { "custom1234" }
+    it "creates a RedirectUrl with the provided custom_slug" do
+      redirect_url = subject.call
+      expect(redirect_url).to be_persisted
+      expect(redirect_url.slug).to eq(custom_slug)
+    end
+
+    it "writes the created record to cache" do
+      expect(Caches::Write).to receive(:call).and_call_original
+      subject.call
+    end
+  end
+
+  context "when expires_at is provided" do
+    let(:expires_at) { 1.day.from_now }
+    it "creates a RedirectUrl with the provided expires_at" do
+      expected_time = expires_at
       redirect_url = subject.call
 
-      expect(redirect_url).to be_persisted
-      expect(redirect_url.original_url).to eq(original_url)
-      expect(redirect_url.slug).to be_present
-      expect(redirect_url.slug.length).to eq(7)
+      expect(redirect_url.expires_at.to_i).to eq(expected_time.to_i)
     end
   end
 
@@ -46,18 +79,15 @@ RSpec.describe RedirectUrls::Create, type: :service do
         expect(result.errors.messages).to eq(errors)
       end
     end
-  end
 
-  context "when updating the slug fails" do
-    let(:errors) do
-      {
-        slug: [ "is the wrong length (should be 7 characters)" ]
-      }
-    end
+    context "when a custom_slug is provided with invalid length (exactly 7 characters)" do
+      let(:custom_slug) { "abcdefg" }
+      it "adds an error to :slug and does not persist the record" do
+        result = subject.call
 
-    it "returns errors" do
-      stub_const("RedirectUrls::GenerateSlug::OFFSET", 100)
-      expect(result.errors.messages).to eq(errors)
+        expect(result).not_to be_persisted
+        expect(result.errors[:slug]).to include("cannot be a 7-character slug because this length is only available for auto generated slugs ")
+      end
     end
   end
 end
