@@ -1,6 +1,5 @@
 require 'rails_helper'
 
-
 RSpec.describe RedirectsController, type: :controller do
   describe "GET #show" do
     let(:redirect_url) { create(:redirect_url) }
