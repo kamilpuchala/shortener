@@ -1,0 +1,207 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "API V1",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/api/v1/redirect_urls": {
+      "get": {
+        "summary": "Retrieves all redirect URLs",
+        "tags": [
+          "RedirectUrls"
+        ],
+        "responses": {
+          "200": {
+            "description": "redirect URLs found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "original_url": {
+                        "type": "string"
+                      },
+                      "slug": {
+                        "type": "string"
+                      },
+                      "visits": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "original_url",
+                      "slug",
+                      "visits"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates a new redirect URL",
+        "tags": [
+          "RedirectUrls"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "redirect URL created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "original_url": {
+                      "type": "string"
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "visits": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "original_url",
+                    "slug",
+                    "visits"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "errors"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "redirect_url": {
+                    "type": "object",
+                    "properties": {
+                      "original_url": {
+                        "type": "string",
+                        "example": "https://onet.pl"
+                      }
+                    },
+                    "required": [
+                      "original_url"
+                    ]
+                  }
+                },
+                "required": [
+                  "redirect_url"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/redirect_urls/{id}": {
+      "get": {
+        "summary": "Retrieves a single redirect URL",
+        "tags": [
+          "RedirectUrls"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Redirect URL ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "redirect URL found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "original_url": {
+                      "type": "string"
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "visits": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "original_url",
+                    "slug",
+                    "visits"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "redirect URL not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

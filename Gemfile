@@ -15,10 +15,7 @@ gem "puma", ">= 5.0"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
-# Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
-# gem "solid_cache"
-# gem "solid_queue"
-# gem "solid_cable"
+# async job
 gem "sidekiq"
 gem "redis", ">= 4.0.1"
 
@@ -37,6 +34,9 @@ gem "thruster", require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
 
+# Base62 encoding and decoding
+gem "base62-rb", github: "steventen/base62-rb"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -46,5 +46,16 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-  gem 'pry'
+  gem "pry"
+
+  # tests
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "shoulda-matchers"
+  gem "simplecov", require: false
+
+
+  gem "rswag-api"
+  gem "rswag-ui"
+  gem "rswag-specs"
 end
