@@ -7,7 +7,7 @@ class CreateRedirectUrl < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :redirect_urls, :slug, unique: true
   end
 end

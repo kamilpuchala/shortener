@@ -7,7 +7,7 @@ RSpec.describe Base62Facade do
       expect(Base62Facade.encode(123)).to eq("abc")
     end
   end
-  
+
   describe ".decode" do
     it "calls Base62.decode with the given encoded string" do
       expect(Base62).to receive(:decode).with("abc").and_return(123)
