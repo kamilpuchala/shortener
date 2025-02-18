@@ -58,6 +58,11 @@ RSpec.configure do |config|
       with.library :rails
     end
   end
+
+  config.before(:each, :memory_cache) do
+    allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache.lookup_store(:memory_store))
+    Rails.cache.clear
+  end
   # RSpec Rails uses metadata to mix in different behaviours to your tests,
   # for example enabling you to call `get` and `post` in request specs. e.g.:
   #

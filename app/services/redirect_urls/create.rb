@@ -12,6 +12,7 @@ module RedirectUrls
         redirect_url = save_redirect_url(redirect_url)
         redirect_url = update_redirect_url_slug(redirect_url)
       end
+      write_to_cache(redirect_url)
 
       redirect_url
     end
@@ -36,6 +37,20 @@ module RedirectUrls
     end
     def generate_slug(id)
       RedirectUrls::GenerateSlug.new(id).call
+    end
+
+    def write_to_cache(redirect_url)
+      Caches::Write.call(cache_key: "#{cache_key[:value]}:#{redirect_url.slug}",
+                         value: cached_value(redirect_url),
+                         expires_in: cache_key[:expires_in])
+    end
+
+    def cache_key
+      CacheKey::KEYS[:redirect]
+    end
+
+    def cached_value(redirect_url)
+      RedirectUrl::CachedRedirectUrl.new(redirect_url.id, redirect_url.original_url, redirect_url.slug)
     end
   end
 end
