@@ -59,9 +59,17 @@ RSpec.configure do |config|
     end
   end
 
+  config.before(:each) do
+    Rails.cache.clear
+  end
+
   config.before(:each, :memory_cache) do
     allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache.lookup_store(:memory_store))
-    Rails.cache.clear
+  end
+
+  config.after(:each, :clear_sidekiq_queues) do
+    Sidekiq::ScheduledSet.new.clear
+    Sidekiq::RetrySet.new.clear
   end
   # RSpec Rails uses metadata to mix in different behaviours to your tests,
   # for example enabling you to call `get` and `post` in request specs. e.g.:
